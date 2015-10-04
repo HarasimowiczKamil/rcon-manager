@@ -1,0 +1,69 @@
+extends ./layout
+
+mixin console(server)
+    - var info = 'Console for ' + server.name + ' (' + server.host + ':' + server.port + ')'
+    pre(class='-console -console-#{server.id}')
+        =info
+
+mixin tab(server)
+
+block body
+    ul#-server-selector.nav.nav-tabs
+        each server in servers
+
+            if selected != server.id
+                li.-select-server(role='presentation')
+                    a(href="#" + server.id, data-id=server.id, aria-controls=server.id, role='tab', data-toggle='tab')
+                        =server.name
+                        | &nbsp;
+                        span.glyphicon.glyphicon-remove(style='color: red;')
+            else
+                li.-select-server.active(role='presentation')
+                    a.active(href="#" + server.id, data-id=server.id, aria-controls=server.id, role='tab', data-toggle='tab')
+                        =server.name
+                        | &nbsp;
+                        span.glyphicon.glyphicon-remove(style='color: red;')
+        li.add(role='presentation')
+            a#-add-connection(href='#',data-toggle='modal', data-target='#-add-server-modal')
+                span.glyphicon.glyphicon-plus(style='color: green;')
+
+    div#-add-server-modal.modal.fade
+        div.modal-dialog
+            div.modal-content
+                form
+                    div.modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title Add server
+                    div.modal-body
+                        div.form-group
+                            label(for='name') Name
+                            input#name.form-control(name="name", type='text', placeholder='server name')
+                        div.form-group
+                            label(for='host') Host
+                            input#host.form-control(name="host", type='text', placeholder='127.0.0.1')
+                        div.form-group
+                            label(for='port') Port
+                            input#port.form-control(name="port", type='number', min="1", max="65535", placeholder='1234')
+                        div.form-group
+                            label(for='password') Password
+                            input#password.form-control(name="password", type='password', placeholder='password')
+
+                    div.modal-footer
+                        button.btn.btn-default(type='button',data-dismiss='modal') Close
+                        button.-save.btn.btn-primary(type='button') Save changes
+    .container-fluid.tab-content
+        each server in servers
+            if selected != server.id
+                .tab-pane(role="tabpanel", id=server.id)
+                    +console(server)
+            else
+                .tab-pane.active(role="tabpanel", id=server.id)
+                    +console(server)
+
+
+    nav.navbar.navbar-default.navbar-fixed-bottom
+        form#command.navbar-form.navbar-left
+            div.form-group
+                input.form-control(type="text", placeholder="Command")
+            button.btn.btn-default(type="submit") Send
