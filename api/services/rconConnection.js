@@ -8,7 +8,9 @@ module.exports = {
         rcon.on('auth', function () {
             rcon.send(command);
         });
-        rcon.on('error', console.log.bind(console.log, 'Error'));
+        rcon.on('error', function (err) {
+            sails.sockets.broadcast('rcon', 'rcon', {from: server.id, msg: 'Error: ' + err});
+        });
         rcon.on('response', function (response) {
             var lines = response.split('\n'),
             lastLine = lines[lines.length - 1],
