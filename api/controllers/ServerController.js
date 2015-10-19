@@ -28,7 +28,7 @@ module.exports = {
             password: req.param('password')
         };
 
-        if (!server.name && req.isSocket){
+        if (!server.name && req.isSocket) {
             Server.watch(req);
             return;
         }
@@ -62,7 +62,10 @@ module.exports = {
     rcon: function (req, res) {
         var command = req.param('command'),
         serverId = req.param('serverId');
-        sails.sockets.emit(sails.sockets.id(req), 'rcon', {from: serverId, msg: 'Some rcon response'});
+        sails.sockets.join(sails.sockets.id(req), 'rcon');
+        Server.find({id: serverId}).exec(function (err, server) {
+            rconConnection.getConnection(server[0], command);
+        });
     }
 };
 
