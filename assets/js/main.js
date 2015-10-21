@@ -72,6 +72,7 @@ $(function ($) {
 
     io.socket.on('rcon', function (event) {
         $('#' + event.from).append($('<pre></pre>').text(event.msg));
+        $('html, body').scrollTop($(document).height());
     });
 
     $('form#command').submit(function (event) {
